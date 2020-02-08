@@ -7,6 +7,8 @@ const PostSchema = mongoose.Schema({
   },
   title: { type: String },
   body: { type: String },
+  comment: [{ com: { type: String }, like: { type: String } }],
+  like: { type: Number },
   date: { type: Date, default: Date.now }
 });
 

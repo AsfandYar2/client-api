@@ -18,25 +18,31 @@ router.get("/", auth, async (req, res) => {
 });
 
 router.put("/:id", auth, async (req, res) => {
-  const { title, post, comment, like } = req.body;
+  const { title, body, comment, like } = req.body;
   //Build Post Object
   const postFields = {};
   if (title) postFields.title = title;
-  if (post) postFields.post = post;
+  if (body) postFields.body = body;
   if (comment) postFields.comment = comment;
   if (like) postFields.like = like;
+  let post = await userPost.findById(req.params.id);
 
-  await userPost.findByIdAndUpdate(
+  if (!post) return res.status(404).json({ msg: "Post not found" });
+
+  post = await userPost.findByIdAndUpdate(
     req.params.id,
     {
       $set: postFields
     },
     { new: true }
   );
-  res.json({ msg: "Updated Successfully" });
+  res.json(post);
 });
 
 router.delete("/:id", auth, async (req, res) => {
+  let post = await userPost.findById(req.params.id);
+
+  if (!post) return res.status(404).json({ msg: "Post not found" });
   await userPost.findByIdAndRemove(req.params.id);
   res.json({ msg: "Delete Successfully" });
 });
